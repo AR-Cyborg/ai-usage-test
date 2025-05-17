@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار الوعي بالذكاء الاصطناعي</title>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #166088;
+            --accent-color: #4fc3f7;
+            --background-color: #f5f7fa;
+            --text-color: #333;
+            --warning-color: #ff7043;
+            --success-color: #66bb6a;
+            --border-color: #ddd;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .header-logo {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .header-logo img {
+            height: 80px;
+            width: auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+        
+        .description {
+            color: var(--text-color);
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background-color: var(--border-color);
+            border-radius: 5px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .question-container {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .question-container.active {
+            display: block;
+        }
+        
+        .question {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        
+        .options {
+            margin-bottom: 30px;
+        }
+        
+        .option {
+            display: block;
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: white;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-right: 45px;
+        }
+        
+        .option:hover {
+            border-color: var(--accent-color);
+        }
+        
+        .option.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(74, 111, 165, 0.1);
+        }
+        
+        .option input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .checkmark {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 20px;
+            width: 20px;
+            background-color: white;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+        }
+        
+        .option.selected .checkmark {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        
+        .option.selected .checkmark:after {
+            display: block;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .prev-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        
+        .prev-btn:hover {
+            background-color: rgba(74, 111, 165, 0.1);
+        }
+        
+        .next-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .next-btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .submit-btn {
+            background-color: var(--success-color);
+            color: white;
+            display: none;
+        }
+        
+        .submit-btn:hover {
+            background-color: #57a358;
+        }
+        
+        .result-container {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            animation: fadeIn 1s ease;
+        }
+        
+        .result-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .result-message {
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .warning {
+            background-color: rgba(255, 112, 67, 0.2);
+            border-left: 5px solid var(--warning-color);
+        }
+        
+        .balanced {
+            background-color: rgba(102, 187, 106, 0.2);
+            border-left: 5px solid var(--success-color);
+        }
+        
+        .average {
+            background-color: rgba(74, 111, 165, 0.2);
+            border-left: 5px solid var(--primary-color);
+        }
+        
+        .advice-container {
+            margin-top: 30px;
+            text-align: right;
+        }
+        
+        .advice-title {
+            font-size: 20px;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+        }
+        
+        .advice-item {
+            background-color: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border-right: 4px solid var(--accent-color);
+            animation: slideIn 0.5s ease;
+        }
+        
+        .qr-code-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .qr-code {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .thank-you-container {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            animation: fadeIn 1s ease;
+        }
+        
+        .thank-you-title {
+            font-size: 32px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .thank-you-message {
+            font-size: 20px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+        
+        .institution-name {
+            font-size: 28px;
+            color: var(--secondary-color);
+            margin-top: 40px;
+            font-weight: 600;
+        }
+        
+        .footer-logo {
+            margin-top: 30px;
+        }
+        
+        .footer-logo img {
+            height: 100px;
+            width: auto;
+        }
+        
+        /* Welcome Page Styles */
+        .welcome-container {
+            text-align: center;
+            padding: 40px;
+            animation: fadeIn 1s ease;
+        }
+        
+        .welcome-title {
+            font-size: 32px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .welcome-message {
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            text-align: right;
+        }
+        
+        .welcome-features {
+            text-align: right;
+            margin: 30px 0;
+        }
+        
+        .feature-item {
+            background-color: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border-right: 4px solid var(--accent-color);
+        }
+        
+        .feature-icon {
+            font-size: 24px;
+            margin-left: 10px;
+            color: var(--primary-color);
+        }
+        
+        .start-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 40px;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        
+        .start-btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin-top: 10px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .question {
+                font-size: 18px;
+            }
+            
+            button {
+                padding: 10px 20px;
+            }
+            
+            .thank-you-title, .welcome-title {
+                font-size: 26px;
+            }
+            
+            .thank-you-message, .welcome-message {
+                font-size: 18px;
+            }
+            
+            .institution-name {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-logo">
+        <!-- Replace with your college logo -->
+        <img src="./images/images (1).png " alt="معاهد أمجاد الجامعيّة" id="collegeLogo">
+    </div>
+    
+    <div class="container">
+        <!-- Welcome Page -->
+        <div class="welcome-container" id="welcomeContainer">
+            <h1 class="welcome-title">مرحباً بك في اختبار الوعي بالذكاء الاصطناعي</h1>
+            
+            <p class="welcome-message">
+                هذا الاختبار صمم خصيصاً لمساعدتك على فهم تأثير الذكاء الاصطناعي على صحتك النفسية وسلوكك الرقمي. 
+                من خلال الإجابة على الأسئلة التالية، ستتمكن من تقييم علاقتك مع التكنولوجيا الحديثة والحصول على نصائح مخصصة لتحقيق توازن صحي.
+            </p>
+            
+            <div class="welcome-features">
+                <div class="feature-item">
+                    <span class="feature-icon">✓</span>
+                    <strong>اختبار سريع:</strong> 14 سؤالاً فقط لتقييم وعيك بالذكاء الاصطناعي
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">✓</span>
+                    <strong>نتيجة فورية:</strong> تحليل فوري لاستخدامك مع تقييم شامل
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">✓</span>
+                    <strong>نصائح مخصصة:</strong> إرشادات شخصية بناءً على إجاباتك
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">✓</span>
+                    <strong>سري وسهل:</strong> لا يستغرق أكثر من 5 دقائق
+                </div>
+            </div>
+            
+            <p class="welcome-message">
+                جميع الإجابات سرية ولن يتم تخزين أي بيانات شخصية. النتائج مخصصة لتوعيتك فقط وليست تشخيصاً طبياً.
+            </p>
+            
+            <button class="start-btn" id="startBtn">ابدأ الاختبار الآن</button>
+        </div>
+        
+        <!-- Quiz Content (initially hidden) -->
+        <div id="quizContent" style="display: none;">
+            <header>
+                <h1>هل تستخدم الذكاء الاصطناعي بوعي؟</h1>
+                <p class="description">اختبار لتقييم تأثير الذكاء الاصطناعي على صحتك النفسية وسلوكك الرقمي</p>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+            </header>
+            
+            <div id="quizContainer">
+                <!-- Questions will be inserted here by JavaScript -->
+            </div>
+            
+            <div class="navigation">
+                <button class="prev-btn" id="prevBtn" disabled>السابق</button>
+                <button class="next-btn" id="nextBtn">التالي</button>
+                <button class="submit-btn" id="submitBtn">إظهار النتيجة</button>
+            </div>
+            
+            <div class="result-container" id="resultContainer">
+                <h2 class="result-title">نتيجة اختبارك</h2>
+                <div class="result-message" id="resultMessage"></div>
+                <div class="advice-container" id="adviceContainer">
+                    <h3 class="advice-title">نصائح مخصصة لك</h3>
+                    <!-- Advice will be inserted here -->
+                </div>
+                <div class="qr-code-container">
+                    <p>شارك الاختبار مع أصدقائك</p>
+                    <div class="qr-code" id="qrCode"></div>
+                </div>
+                <button class="next-btn" id="finishBtn">إنهاء</button>
+            </div>
+            
+            <div class="thank-you-container" id="thankYouContainer">
+                <div class="thank-you-content">
+                    <h2 class="thank-you-title">شكراً لمشاركتك في هذا الاستبيان</h2>
+                    <p class="thank-you-message">
+                        نأمل أن تكون قد استفدت من هذا الاختبار وتعلمت المزيد عن تأثير الذكاء الاصطناعي على صحتك النفسية.<br>
+                        نتمنى لك توازناً صحياً في استخدام التكنولوجيا.
+                    </p>
+                    
+                    <!-- Logo Placement - Centered with elegant spacing -->
+                    <div class="thank-you-logo-container">
+                        <img src="./images/images (1).png" 
+                             alt="شعار مؤسسة أمجاد" 
+                             class="thank-you-logo">
+                    </div>
+                    
+                    <!-- Institution Name with modern typography -->
+                    <div class="institution-signature">
+                        <div class="institution-name"> معاهد أمجاد الجامعيّة </div>
+                        <div class="institution-tagline">نحو مستقبل رقمي متوازن</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // الأسئلة الكاملة مع النصائح
+        const questions = [
+            {
+                question: "كم ساعة تستخدم فيها أدوات الذكاء الاصطناعي يوميًا؟",
+                options: [
+                    { text: "أقل من ساعة ", score: 4 },
+                    { text: "1-3 ساعات", score: 3 },
+                    { text: "3-6 ساعات", score: 2 },
+                    { text: "أكثر من 6 ساعات ", score: 1 }
+                ],
+                advice: {
+                    1: "الإفراط في استخدام الذكاء الاصطناعي قد يؤثر على تواصلك الاجتماعي ونومك. حاول تقليل الاستخدام تدريجياً.",
+                    2: "حاول تحديد ساعات محددة لاستخدام الذكاء الاصطناعي للحفاظ على توازنك."
+                }
+            },
+            {
+                question: "هل تعتمد على الذكاء الاصطناعي لأغراض عاطفية (كالدردشة أو الدعم المعنوي)؟",
+                options: [
+                    { text: "أبدًا ", score: 4 },
+                    { text: "نادرًا", score: 3 },
+                    { text: "أحيانًا", score: 2 },
+                    { text: "دائمًا ", score: 1 }
+                ],
+                advice: {
+                    1: "لاحظنا أنك تعتمد على الذكاء الاصطناعي عندما تكون حزينًا، حاول الحديث مع صديق أو متخصص نفسي عند الحاجة.",
+                    2: "تذكر أن الذكاء الاصطناعي لا يمكنه فهم المشاعر البشرية بشكل كامل. العلاقات الإنسانية مهمة."
+                }
+            },
+            {
+                question: "هل تشعر بالعزلة بسبب قضاء وقت طويل مع أدوات الذكاء الاصطناعي؟",
+                options: [
+                    { text: "لا أبدًا ", score: 4 },
+                    { text: "نادرًا", score: 3 },
+                    { text: "أحيانًا", score: 2 },
+                    { text: "كثيرًا ", score: 1 }
+                ],
+                advice: {
+                    1: "العزلة الاجتماعية قد تؤثر على صحتك النفسية. حاول تنظيم وقتك وخصص وقتاً للتفاعل مع الآخرين.",
+                    2: "الذكاء الاصطناعي لا يمكنه أن يحل محل العلاقات الإنسانية. خصص وقتاً للتواصل مع الأصدقاء والعائلة."
+                }
+            },
+            {
+                question: "هل ساعدك الذكاء الاصطناعي في تنظيم وقتك أو مشاعرك؟",
+                options: [
+                    { text: "نعم، كثيرًا ", score: 4 },
+                    { text: "نوعًا ما", score: 3 },
+                    { text: "نادرًا", score: 2 },
+                    { text: "لم يساعدني أبدًا ", score: 1 }
+                ],
+                advice: {
+                    1: "إذا لم تجد الذكاء الاصطناعي مفيداً، ربما تحتاج لتقييم سبب استخدامك له.",
+                    4: "جيد أنك تستفيد من الذكاء الاصطناعي بشكل إيجابي، لكن تذكر ألا تعتمد عليه كلياً."
+                }
+            },
+            {
+                question: "هل تستخدم أدوات الذكاء الاصطناعي قبل النوم مباشرة؟",
+                options: [
+                    { text: "لا أبدًا ", score: 4 },
+                    { text: "نادرًا", score: 3 },
+                    { text: "أحيانًا", score: 2 },
+                    { text: "دائمًا ", score: 1 }
+                ],
+                advice: {
+                    1: "الإفراط في استخدام الذكاء الاصطناعي قد يؤثر على نومك. حاول تخصيص وقت خالٍ من الشاشات قبل النوم.",
+                    2: "استخدام الشاشات قبل النوم قد يؤثر على جودة نومك. حاول التوقف عن استخدامها قبل النوم بساعة على الأقل."
+                }
+            },
+            {
+                question: "هل سبق وفضلت التحدث مع روبوت على التحدث مع شخص حقيقي؟",
+                options: [
+                    { text: "لا ", score: 4 },
+                    { text: "نادرًا", score: 3 },
+                    { text: "أحيانًا", score: 2 },
+                    { text: "نعم، دائمًا ", score: 1 }
+                ],
+                advice: {
+                    1: "التواصل البشري ضروري للصحة النفسية. لا تدع الذكاء الاصطناعي يعزلك عن العالم الحقيقي.",
+                    2: "حاول الموازنة بين التفاعل مع الذكاء الاصطناعي والتفاعل مع الأشخاص الحقيقيين."
+                }
+            },
+            {
+                question: "هل تجعلك أدوات الذكاء الاصطناعي أكثر إنتاجية؟",
+                options: [
+                    { text: "نعم ", score: 4 },
+                    { text: "نوعًا ما", score: 3 },
+                    { text: "لا تؤثر", score: 2 },
+                    { text: "لا، تجعلني أتكاسل ", score: 1 }
+                ],
+                advice: {
+                    1: "إذا كان الذكاء الاصطناعي يقلل إنتاجيتك، فكر في وضع قواعد لاستخدامه.",
+                    2: "حاول استخدام الذكاء الاصطناعي كأداة مساعدة بدلاً من الاعتماد عليه كلياً."
+                }
+            },
+            {
+                question: "هل تراقب حالتك النفسية عند استخدام الذكاء الاصطناعي؟",
+                options: [
+                    { text: "دائمًا ", score: 4 },
+                    { text: "أحيانًا", score: 3 },
+                    { text: "نادرًا", score: 2 },
+                    { text: "لا ", score: 1 }
+                ],
+                advice: {
+                    1: "الوعي بالحالة النفسية أثناء استخدام التكنولوجيا مهم. حاول أن تكون أكثر انتباهاً لمشاعرك.",
+                    2: "راقب كيف يؤثر استخدام الذكاء الاصطناعي على مزاجك وطاقتك."
+                }
+            },
+            {
+                question: "هل تستخدم الذكاء الاصطناعي أثناء تناول الطعام أو الاجتماعات العائلية؟",
+                options: [
+                    { text: "لا أبدًا ", score: 4 },
+                    { text: "نادرًا", score: 3 },
+                    { text: "أحيانًا", score: 2 },
+                    { text: "دائمًا ", score: 1 }
+                ],
+                advice: {
+                    1: "حاول فصل وقت استخدام الذكاء الاصطناعي عن وقت العائلة والوجبات للحفاظ على تواصل اجتماعي صحي.",
+                    2: "الوجبات العائلية فرصة للتواصل. حاول تجنب استخدام الذكاء الاصطناعي خلالها."
+                }
+            },
+            {
+                question: "هل تحذف أدوات الذكاء الاصطناعي عندما تشعر بالإدمان؟",
+                options: [
+                    { text: "نعم ", score: 4 },
+                    { text: "أفكر في ذلك", score: 3 },
+                    { text: "لا أستطيع", score: 2 },
+                    { text: "لا، لا أرى مشكلة ", score: 1 }
+                ],
+                advice: {
+                    1: "عدم الاعتراف بالمشكلة قد يكون علامة على الإدمان. كن صادقاً مع نفسك.",
+                    2: "إذا كنت تشعر بأنك لا تستطيع التوقف، قد تحتاج لطلب مساعدة."
+                }
+            },
+            {
+                question: "هل تشعر بالذنب بعد استخدام الذكاء الاصطناعي لفترات طويلة؟",
+                options: [
+                    { text: "نعم ", score: 1 },
+                    { text: "أحيانًا", score: 2 },
+                    { text: "نادرًا", score: 3 },
+                    { text: "لا ", score: 4 }
+                ],
+                advice: {
+                    1: "الشعور بالذنب قد يكون مؤشراً على أنك تعرف أن استخدامك مفرط. استمع إلى مشاعرك.",
+                    2: "حاول تحديد أسباب شعورك بالذنب ووضع حدود لاستخدامك."
+                }
+            },
+            {
+                question: "هل تُشارك عاداتك الرقمية مع أصدقائك أو عائلتك؟",
+                options: [
+                    { text: "نعم ", score: 4 },
+                    { text: "نادرًا", score: 3 },
+                    { text: "أحيانًا", score: 2 },
+                    { text: "لا ", score: 1 }
+                ],
+                advice: {
+                    1: "المشاركة مع الآخرين تساعد في الحفاظ على توازن صحي. حاول أن تكون أكثر انفتاحاً.",
+                    2: "التحدث عن عاداتك الرقمية مع المقربين قد يساعدك في الحفاظ على توازنك."
+                }
+            },
+            {
+                question: "هل تبحث عن بدائل واقعية (كالقراءة، التأمل، أو الرياضة) بدل الاعتماد على الذكاء الاصطناعي؟",
+                options: [
+                    { text: "دائمًا ", score: 4 },
+                    { text: "أحيانًا", score: 3 },
+                    { text: "نادرًا", score: 2 },
+                    { text: "لا ", score: 1 }
+                ],
+                advice: {
+                    1: "الأنشطة الواقعية مهمة لصحتك النفسية والجسدية. حاول إدخالها إلى روتينك.",
+                    2: "موازنة الذكاء الاصطناعي مع أنشطة أخرى يحسن جودة حياتك."
+                }
+            },
+            {
+                question: "هل تعتقد أن الذكاء الاصطناعي يمكن أن يحلّ محلّ الدعم النفسي الحقيقي؟",
+                options: [
+                    { text: "أبدًا ", score: 4 },
+                    { text: "ربما", score: 3 },
+                    { text: "أحيانًا", score: 2 },
+                    { text: "نعم ", score: 1 }
+                ],
+                advice: {
+                    1: "الذكاء الاصطناعي لا يمكنه فهم المشاعر البشرية بشكل كامل. العلاقات الإنسانية والدعم النفسي الحقيقي لا غنى عنهما.",
+                    2: "استخدم الذكاء الاصطناعي كدعم إضافي، وليس كبديل للعلاقات الإنسانية."
+                }
+            }
+        ];
+
+        // متغيرات التطبيق
+        let currentQuestion = 0;
+        let answers = [];
+        let totalScore = 0;
+        const welcomeContainer = document.getElementById('welcomeContainer');
+        const quizContent = document.getElementById('quizContent');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultContainer = document.getElementById('resultContainer');
+        const thankYouContainer = document.getElementById('thankYouContainer');
+        const progressBar = document.getElementById('progressBar');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const finishBtn = document.getElementById('finishBtn');
+        const resultMessage = document.getElementById('resultMessage');
+        const adviceContainer = document.getElementById('adviceContainer');
+        const qrCode = document.getElementById('qrCode');
+        const collegeLogo = document.getElementById('collegeLogo');
+        const startBtn = document.getElementById('startBtn');
+
+        // بدء الاختبار
+        function startQuiz() {
+            welcomeContainer.style.display = 'none';
+            quizContent.style.display = 'block';
+            answers = new Array(questions.length).fill(null);
+            renderQuestion();
+            updateProgressBar();
+            updateNavigationButtons();
+        }
+
+        // عرض السؤال الحالي
+        function renderQuestion() {
+            // إخفاء جميع الأسئلة أولاً
+            document.querySelectorAll('.question-container').forEach(q => {
+                q.style.display = 'none';
+            });
+            
+            const question = questions[currentQuestion];
+            
+            // التحقق مما إذا كان السؤال موجوداً بالفعل
+            let questionElement = document.getElementById(`question${currentQuestion}`);
+            
+            if (!questionElement) {
+                // إنشاء السؤال إذا لم يكن موجوداً
+                questionElement = document.createElement('div');
+                questionElement.className = 'question-container';
+                questionElement.id = `question${currentQuestion}`;
+                quizContainer.appendChild(questionElement);
+            }
+            
+            let optionsHTML = '';
+            question.options.forEach((option, index) => {
+                const isSelected = answers[currentQuestion] === index;
+                optionsHTML += `
+                    <label class="option ${isSelected ? 'selected' : ''}">
+                        ${option.text}
+                        <input type="radio" name="question${currentQuestion}" value="${index}" ${isSelected ? 'checked' : ''}>
+                        <span class="checkmark"></span>
+                    </label>
+                `;
+            });
+            
+            questionElement.innerHTML = `
+                <div class="question">${currentQuestion + 1}. ${question.question}</div>
+                <div class="options">${optionsHTML}</div>
+            `;
+            
+            // إظهار السؤال الحالي فقط
+            questionElement.style.display = 'block';
+            
+            // إضافة مستمعين للأحداث
+            document.querySelectorAll(`#question${currentQuestion} .option`).forEach((option, index) => {
+                option.addEventListener('click', () => {
+                    selectOption(index);
+                });
+            });
+        }
+
+        // اختيار إجابة
+        function selectOption(optionIndex) {
+            answers[currentQuestion] = optionIndex;
+            updateNavigationButtons();
+            renderQuestion(); // Refresh to show selection
+        }
+
+        // تحديث شريط التقدم
+        function updateProgressBar() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // تحديث أزرار التنقل
+        function updateNavigationButtons() {
+            prevBtn.disabled = currentQuestion === 0;
+            
+            if (currentQuestion === questions.length - 1) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'block';
+                submitBtn.disabled = answers[currentQuestion] === null;
+            } else {
+                nextBtn.style.display = 'block';
+                submitBtn.style.display = 'none';
+                nextBtn.disabled = answers[currentQuestion] === null;
+            }
+        }
+
+        // الانتقال إلى السؤال التالي
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1 && answers[currentQuestion] !== null) {
+                currentQuestion++;
+                renderQuestion();
+                updateProgressBar();
+                updateNavigationButtons();
+            }
+        }
+
+        // العودة إلى السؤال السابق
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+                updateProgressBar();
+                updateNavigationButtons();
+            }
+        }
+
+        // حساب النتيجة
+        function calculateResult() {
+            totalScore = 0;
+            const specificAdvice = [];
+            
+            answers.forEach((answerIndex, questionIndex) => {
+                if (answerIndex !== null) {
+                    const question = questions[questionIndex];
+                    const selectedOption = question.options[answerIndex];
+                    totalScore += selectedOption.score;
+                    
+                    // جمع النصائح الخاصة إذا كانت موجودة
+                    if (question.advice && question.advice[selectedOption.score]) {
+                        specificAdvice.push(question.advice[selectedOption.score]);
+                    }
+                }
+            });
+            
+            return { totalScore, specificAdvice };
+        }
+
+        // عرض النتيجة
+        function showResult() {
+            const { totalScore, specificAdvice } = calculateResult();
+            let message = '';
+            let messageClass = '';
+            
+            if (totalScore >= 14 && totalScore <= 20) {
+                message = '⚠️ "أنت تُفرط في استخدام الذكاء الاصطناعي بطريقة قد تؤثر على صحتك النفسية. ننصحك بتقليل الاعتماد عليه والعودة إلى توازن حياتك."';
+                messageClass = 'warning';
+            } else if (totalScore >= 21 && totalScore <= 35) {
+                message = '⚖️ "استخدامك مقبول، ولكن يحتاج إلى تحسين في بعض الجوانب. راقب عاداتك الرقمية."';
+                messageClass = 'average';
+            } else if (totalScore >= 36 && totalScore <= 56) {
+                message = '✅ "استخدامك للذكاء الاصطناعي متوازن وصحي. استمر بهذه العادات الذكية!"';
+                messageClass = 'balanced';
+            }
+            
+            resultMessage.innerHTML = message;
+            resultMessage.className = `result-message ${messageClass}`;
+            
+            // عرض النصائح الخاصة
+            adviceContainer.innerHTML = `
+                <h3 class="advice-title">نصائح مخصصة لك</h3>
+                ${specificAdvice.map(advice => `<div class="advice-item">${advice}</div>`).join('')}
+            `;
+            
+            // إنشاء QR Code
+            generateQRCode();
+            
+            // إخفاء الاختبار وعرض النتيجة
+            quizContainer.style.display = 'none';
+            document.querySelector('.navigation').style.display = 'none';
+            resultContainer.style.display = 'block';
+        }
+
+        // عرض صفحة الشكر
+        function showThankYou() {
+            resultContainer.style.display = 'none';
+            thankYouContainer.style.display = 'block';
+        }
+
+        // إنشاء QR Code
+        function generateQRCode() {
+            qrCode.innerHTML = `
+                <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 14px; margin-bottom: 5px;">مسح رمز الاستجابة</div>
+                        <div style="width: 100px; height: 100px; background: #eee; margin: 0 auto;"></div>
+                        <div style="font-size: 12px; margin-top: 5px;">اختبار الوعي بالذكاء الاصطناعي</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // مستمعي الأحداث
+        startBtn.addEventListener('click', startQuiz);
+        prevBtn.addEventListener('click', prevQuestion);
+        nextBtn.addEventListener('click', nextQuestion);
+        submitBtn.addEventListener('click', showResult);
+        finishBtn.addEventListener('click', showThankYou);
+    </script>
+</body>
+</html>
